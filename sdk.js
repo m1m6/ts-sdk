@@ -457,7 +457,7 @@
                         xhr.onload = function () {}; // success case
                         xhr.onerror = function () {}; // failure case
 
-                        xhr.open('POST', 'https://app.translatestack.com/graphql/save-strings', true);
+                        xhr.open('POST', 'https://app.translatestack.com/graphqlsave-strings', true);
                         xhr.setRequestHeader('Content-Type', 'application/json');
                         xhr.send(JSON.stringify(data));
                     }, 5000); //fine to get the strings after 5 seconds of loading the page!
@@ -471,7 +471,7 @@
 
         xhrGet.open(
             'GET',
-            `https://app.translatestack.com/graphql/get-strings?apiKey=${apiKey}&href=${window.location.href}`,
+            `https://app.translatestack.com/graphqlget-strings?apiKey=${apiKey}&href=${window.location.href}`,
             true
         );
         xhrGet.setRequestHeader('Content-Type', 'application/json');
