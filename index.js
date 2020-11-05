@@ -406,72 +406,78 @@
 });
 
 (function (window) {
-    var bodyScripts = document.querySelectorAll('body script');
-    for (var i = 0; i < bodyScripts.length; i++) {
-        bodyScripts[i].remove();
-    }
-
-    var pageText = document.body.innerText.split('\n');
-
-    var tssScript = document.getElementById('tss-script');
-    var tssScriptSrc = tssScript.getAttribute('src');
-    var apiKey = tssScriptSrc.substring(tssScriptSrc.indexOf('=') + 1);
-
-    var data = {
-        apiKey: apiKey,
-        pageText: pageText,
-        pathname: window.location.pathname,
-        origin: window.location.origin,
-        href: window.location.href,
-    };
-
-    var xhrGet = new XMLHttpRequest();
-    xhrGet.onreadystatechange = function () {
-        let userSelectedLanguageId = 1;
-        // get the data
-        // store it in global variable
-        // then from the select options do the rest...
-        if (xhrGet.readyState == XMLHttpRequest.DONE) {
-            const responseString = xhrGet.responseText;
-            let response;
-            try {
-                response = JSON.parse(responseString);
-                window.__tsStack = response;
-            } catch (e) {
-                console.log(e);
-            }
-
-            if (response && response.pageStrings && response.pageStrings.length) {
-                buildSelect();
-            } else {
-                // if we don't have the site strings -> send them
-                setTimeout(() => {
-                    var xhr = new XMLHttpRequest();
-                    xhr.onload = function () {}; // success case
-                    xhr.onerror = function () {}; // failure case
-
-                    xhr.open('POST', 'https://app.translatestack.com/graphqlsave-strings', true);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.send(JSON.stringify(data));
-                }, 5000); //fine to get the strings after 5 seconds of loading the page!
-            }
+    var everythingLoaded = setInterval(function () {
+        if (/loaded|complete/.test(document.readyState)) {
+            clearInterval(everythingLoaded);
+            init();
         }
-    }; // success case
+    }, 50);
 
-    xhrGet.onerror = function (err) {
-        console.log(err);
-    }; // failure case
+    function init() {
+        var bodyScripts = document.querySelectorAll('body script');
+        for (var i = 0; i < bodyScripts.length; i++) {
+            bodyScripts[i].remove();
+        }
 
-    xhrGet.open(
-        'GET',
-        `https://app.translatestack.com/graphqlget-strings?apiKey=${apiKey}&href=${window.location.href}`,
-        true
-    );
-    xhrGet.setRequestHeader('Content-Type', 'application/json');
-    xhrGet.send();
+        var pageText = document.body.innerText.split('\n');
 
+        var tssScript = document.getElementById('tss-script');
+        var tssScriptSrc = tssScript.getAttribute('src');
+        var apiKey = tssScriptSrc.substring(tssScriptSrc.indexOf('=') + 1);
 
-    addStyle(`
+        var data = {
+            apiKey: apiKey,
+            pageText: pageText,
+            pathname: window.location.pathname,
+            origin: window.location.origin,
+            href: window.location.href,
+        };
+
+        var xhrGet = new XMLHttpRequest();
+        xhrGet.onreadystatechange = function () {
+            // get the data
+            // store it in global variable
+            // then from the select options do the rest...
+            if (xhrGet.readyState == XMLHttpRequest.DONE) {
+                var responseString = xhrGet.responseText;
+                var response;
+                try {
+                    response = JSON.parse(responseString);
+                    window.__tsStack = response;
+                } catch (e) {
+                    console.log(e);
+                }
+
+                if (response && response.pageStrings && response.pageStrings.length) {
+                    buildSelect();
+                } else {
+                    // if we don't have the site strings -> send them
+                    setTimeout(() => {
+                        var xhr = new XMLHttpRequest();
+                        xhr.onload = function () {}; // success case
+                        xhr.onerror = function () {}; // failure case
+
+                        xhr.open('POST', 'https://app.translatestack.com/graphql/save-strings', true);
+                        xhr.setRequestHeader('Content-Type', 'application/json');
+                        xhr.send(JSON.stringify(data));
+                    }, 5000); //fine to get the strings after 5 seconds of loading the page!
+                }
+            }
+        }; // success case
+
+        xhrGet.onerror = function (err) {
+            console.log(err);
+        }; // failure case
+
+        xhrGet.open(
+            'GET',
+            `https://app.translatestack.com/graphql/get-strings?apiKey=${apiKey}&href=${window.location.href}`,
+            true
+        );
+        xhrGet.setRequestHeader('Content-Type', 'application/json');
+        xhrGet.send();
+
+        addStyle(`
     .custom-select {
         font-family: Arial;
         z-index: 1;
@@ -560,248 +566,248 @@
         opacity: 1 !important;
       }`);
 
-    function buildSelect() {
-        if (window.__tsStack) {
-            var wrapperDiv = document.createElement('div');
-            wrapperDiv.className = 'custom-select';
+        function buildSelect() {
+            if (window.__tsStack) {
+                var wrapperDiv = document.createElement('div');
+                wrapperDiv.className = 'custom-select';
 
-            var populatedLanguages = window.__tsStack.populatedLanguages;
-            var customizer = window.__tsStack.customizer;
+                var populatedLanguages = window.__tsStack.populatedLanguages;
+                var customizer = window.__tsStack.customizer;
 
-            if (customizer && customizer.appearance === 'WITH_BRANDING') {
-                populatedLanguages.unshift('⚡ by translatestack');
-            }
+                if (customizer && customizer.appearance === 'WITH_BRANDING') {
+                    populatedLanguages.unshift('⚡ by translatestack');
+                }
 
-            populatedLanguages.unshift('Select Language');
+                populatedLanguages.unshift('Select Language');
 
-            var select = document.createElement('select');
+                var select = document.createElement('select');
 
-            for (let i = 0; i < populatedLanguages.length; i++) {
-                const val = populatedLanguages[i];
+                for (var i = 0; i < populatedLanguages.length; i++) {
+                    var val = populatedLanguages[i];
 
-                var option = document.createElement('option');
-                if (isLanguageOption(i)) {
-                    //create image wrapper
-                    var imgWrapper = document.createElement('div');
-                    imgWrapper.setAttribute('data-value', val.id);
-                    imgWrapper.style.setProperty('font-size', '14px');
-                    imgWrapper.style.setProperty('color', '#0a2540');
-                    imgWrapper.style.setProperty('border', 'unset');
-                    imgWrapper.style.setProperty('padding-left', '8px');
-                    imgWrapper.style.setProperty('padding-right', '8px');
+                    var option = document.createElement('option');
+                    if (isLanguageOption(i)) {
+                        //create image wrapper
+                        var imgWrapper = document.createElement('div');
+                        imgWrapper.setAttribute('data-value', val.id);
+                        imgWrapper.style.setProperty('font-size', '14px');
+                        imgWrapper.style.setProperty('color', '#0a2540');
+                        imgWrapper.style.setProperty('border', 'unset');
+                        imgWrapper.style.setProperty('padding-left', '8px');
+                        imgWrapper.style.setProperty('padding-right', '8px');
 
-                    // create img
-                    var img = document.createElement('img');
-                    img.src = val.flag;
-                    img.style.setProperty('width', '23px');
-                    img.style.setProperty('height', '23px');
-                    img.style.setProperty('border-radius', '50px');
+                        // create img
+                        var img = document.createElement('img');
+                        img.src = val.flag;
+                        img.style.setProperty('width', '23px');
+                        img.style.setProperty('height', '23px');
+                        img.style.setProperty('border-radius', '50px');
 
-                    // create span
-                    var imgSpan = document.createElement('span');
-                    imgSpan.style.setProperty('margin-left', '10px');
+                        // create span
+                        var imgSpan = document.createElement('span');
+                        imgSpan.style.setProperty('margin-left', '10px');
 
-                    if (customizer.text === 'SHORTENED') {
-                        imgSpan.textContent = val.iso2.toUpperCase();
-                    } else if (customizer.text === 'FULL') {
-                        imgSpan.textContent = val.language;
-                    } else if (customizer.text === 'FLAG_ONLY') {
-                        imgSpan.textContent = '';
+                        if (customizer.text === 'SHORTENED') {
+                            imgSpan.textContent = val.iso2.toUpperCase();
+                        } else if (customizer.text === 'FULL') {
+                            imgSpan.textContent = val.language;
+                        } else if (customizer.text === 'FLAG_ONLY') {
+                            imgSpan.textContent = '';
+                        }
+
+                        imgWrapper.appendChild(img);
+                        imgWrapper.appendChild(imgSpan);
+                        option.value = val.id;
+                        option.appendChild(imgWrapper);
+                    } else {
+                        option.value = 0;
+                        option.text = val;
                     }
 
-                    imgWrapper.appendChild(img);
-                    imgWrapper.appendChild(imgSpan);
-                    option.value = val.id;
-                    option.appendChild(imgWrapper);
-                } else {
-                    option.value = 0;
-                    option.text = val;
+                    select.appendChild(option);
                 }
 
-                select.appendChild(option);
-            }
+                wrapperDiv.appendChild(select);
 
-            wrapperDiv.appendChild(select);
-
-            if (customizer && customizer.position === 'LEFT') {
-                wrapperDiv.style.setProperty('left', '1vw');
-                document.body.appendChild(wrapperDiv);
-            } else if (customizer && customizer.position === 'RIGHT') {
-                wrapperDiv.style.setProperty('right', '1vw');
-                document.body.appendChild(wrapperDiv);
-            } else if (
-                customizer &&
-                customizer.position === 'CUSTOM' &&
-                (customizer.customDivId !== '' || customizer.customDivId !== 'null')
-            ) {
-                const desiredDiv = document.getElementById(customizer.customDivId);
-                if (desiredDiv) {
-                    wrapperDiv.style.position = 'relative';
-                    desiredDiv.append(wrapperDiv);
-                } else {
+                if (customizer && customizer.position === 'LEFT') {
                     wrapperDiv.style.setProperty('left', '1vw');
                     document.body.appendChild(wrapperDiv);
+                } else if (customizer && customizer.position === 'RIGHT') {
+                    wrapperDiv.style.setProperty('right', '1vw');
+                    document.body.appendChild(wrapperDiv);
+                } else if (
+                    customizer &&
+                    customizer.position === 'CUSTOM' &&
+                    (customizer.customDivId !== '' || customizer.customDivId !== 'null')
+                ) {
+                    var desiredDiv = document.getElementById(customizer.customDivId);
+                    if (desiredDiv) {
+                        wrapperDiv.style.position = 'relative';
+                        desiredDiv.append(wrapperDiv);
+                    } else {
+                        wrapperDiv.style.setProperty('left', '1vw');
+                        document.body.appendChild(wrapperDiv);
+                    }
+                }
+
+                makeSelectWork();
+            }
+        }
+
+        function isLanguageOption(i) {
+            if (i === 0) return false;
+            else {
+                var customizer = window.__tsStack.customizer;
+                if (customizer && customizer.appearance === 'WITH_BRANDING' && i === 1) {
+                    return false;
                 }
             }
-
-            makeSelectWork();
+            return true;
         }
-    }
 
-    function isLanguageOption(i) {
-        if (i === 0) return false;
-        else {
-            var customizer = window.__tsStack.customizer;
-            if (customizer && customizer.appearance === 'WITH_BRANDING' && i === 1) {
-                return false;
-            }
+        function addStyle(styleString) {
+            var style = document.createElement('style');
+            style.textContent = styleString;
+            document.head.append(style);
         }
-        return true;
-    }
 
-    function addStyle(styleString) {
-        const style = document.createElement('style');
-        style.textContent = styleString;
-        document.head.append(style);
-    }
+        function makeSelectWork() {
+            var x, i, j, l, ll, selElmnt, a, b, c;
+            x = document.getElementsByClassName('custom-select');
+            l = x.length;
+            for (i = 0; i < l; i++) {
+                selElmnt = x[i].getElementsByTagName('select')[0];
+                ll = selElmnt.length;
 
-    function makeSelectWork() {
-        var x, i, j, l, ll, selElmnt, a, b, c;
-        x = document.getElementsByClassName('custom-select');
-        l = x.length;
-        for (i = 0; i < l; i++) {
-            selElmnt = x[i].getElementsByTagName('select')[0];
-            ll = selElmnt.length;
+                a = document.createElement('DIV');
+                a.setAttribute('class', 'select-selected');
+                a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+                x[i].appendChild(a);
 
-            a = document.createElement('DIV');
-            a.setAttribute('class', 'select-selected');
-            a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
-            x[i].appendChild(a);
+                b = document.createElement('DIV');
+                b.setAttribute('class', 'select-items select-hide');
 
-            b = document.createElement('DIV');
-            b.setAttribute('class', 'select-items select-hide');
+                for (j = 1; j < ll; j++) {
+                    c = document.createElement('DIV');
+                    c.innerHTML = selElmnt.options[j].innerHTML;
 
-            for (j = 1; j < ll; j++) {
-                c = document.createElement('DIV');
-                c.innerHTML = selElmnt.options[j].innerHTML;
+                    if (c.innerHTML === '⚡ by translatestack') {
+                        c.className = 'select-header';
 
-                if (c.innerHTML === '⚡ by translatestack') {
-                    c.className = 'select-header';
-
-                    c.style.backgroundColor = 'white';
-                    c.style.setProperty('font-size', '9px');
-                    c.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    });
-                } else {
-                    c.addEventListener('click', function (e) {
-                        var y, i, k, s, h, sl, yl;
-                        s = this.parentNode.parentNode.getElementsByTagName('select')[0];
-                        sl = s.length;
-                        h = this.parentNode.previousSibling;
-                        for (i = 0; i < sl; i++) {
-                            if (s.options[i].innerHTML == this.innerHTML) {
-                                s.selectedIndex = i;
-                                h.innerHTML = this.innerHTML;
-                                y = this.parentNode.getElementsByClassName('same-as-selected');
-                                yl = y.length;
-                                for (k = 0; k < yl; k++) {
-                                    y[k].removeAttribute('class');
+                        c.style.backgroundColor = 'white';
+                        c.style.setProperty('font-size', '9px');
+                        c.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        });
+                    } else {
+                        c.addEventListener('click', function (e) {
+                            var y, i, k, s, h, sl, yl;
+                            s = this.parentNode.parentNode.getElementsByTagName('select')[0];
+                            sl = s.length;
+                            h = this.parentNode.previousSibling;
+                            for (i = 0; i < sl; i++) {
+                                if (s.options[i].innerHTML == this.innerHTML) {
+                                    s.selectedIndex = i;
+                                    h.innerHTML = this.innerHTML;
+                                    y = this.parentNode.getElementsByClassName('same-as-selected');
+                                    yl = y.length;
+                                    for (k = 0; k < yl; k++) {
+                                        y[k].removeAttribute('class');
+                                    }
+                                    this.setAttribute('class', 'same-as-selected');
+                                    break;
                                 }
-                                this.setAttribute('class', 'same-as-selected');
-                                break;
                             }
-                        }
-                        h.click();
+                            h.click();
 
-                        try {
-                            applyTranslations(this.children[0].getAttribute('data-value'));
-                        } catch (e) {
-                            console.log('unable to apply translations', e);
-                        }
-                    });
+                            try {
+                                applyTranslations(this.children[0].getAttribute('data-value'));
+                            } catch (e) {
+                                console.log('unable to apply translations', e);
+                            }
+                        });
+                    }
+                    b.appendChild(c);
                 }
-                b.appendChild(c);
-            }
 
-            x[i].appendChild(b);
-            a.addEventListener('click', function (e) {
-                e.stopPropagation();
-                closeAllSelect(this);
-                this.nextSibling.classList.toggle('select-hide');
-                this.classList.toggle('select-arrow-active');
-            });
-        }
-    }
-
-    window.translatedStringsMap = [];
-
-    function applyTranslations(languageId) {
-        //get  all translations for this lang
-        let shouldReflectOldDom = false;
-        console.log('languageId', languageId);
-
-        if (window.translatedStringsMap.length !== 0) {
-            // we have string, then return them to originals
-
-            for (let i = 0; i < window.translatedStringsMap.length; i++) {
-                let value = window.translatedStringsMap[i];
-                findAndReplaceDOMText(document.body, {
-                    find: value.to,
-                    replace: value.original,
+                x[i].appendChild(b);
+                a.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    closeAllSelect(this);
+                    this.nextSibling.classList.toggle('select-hide');
+                    this.classList.toggle('select-arrow-active');
                 });
             }
-
-            window.translatedStringsMap = []
         }
 
-        if (window.__tsStack) {
-            const pageStrings = window.__tsStack.pageStrings;
-            pageStrings.forEach((translatedString) => {
-                if (translatedString.translations && translatedString.translations.length) {
-                    translatedString.translations.forEach((translation) => {
-                        if (translation.languagesId === parseInt(languageId)) {
-                            window.translatedStringsMap.push({
-                                original: translatedString.original,
-                                to: translation.translatedString,
-                            });
+        window.translatedStringsMap = [];
 
-                            findAndReplaceDOMText(document.body, {
-                                find: translatedString.original,
-                                replace: translation.translatedString,
-                            });
-                        }
+        function applyTranslations(languageId) {
+            //get  all translations for this lang
+            console.log('languageId', languageId);
+
+            if (window.translatedStringsMap.length !== 0) {
+                // we have string, then return them to originals
+
+                for (var i = 0; i < window.translatedStringsMap.length; i++) {
+                    var value = window.translatedStringsMap[i];
+                    findAndReplaceDOMText(document.body, {
+                        find: value.to,
+                        replace: value.original,
                     });
                 }
-            });
-        }
-    }
 
-    function closeAllSelect(elmnt) {
-        var x,
-            y,
-            i,
-            xl,
-            yl,
-            arrNo = [];
-        x = document.getElementsByClassName('select-items');
-        y = document.getElementsByClassName('select-selected');
-        xl = x.length;
-        yl = y.length;
-        for (i = 0; i < yl; i++) {
-            if (elmnt == y[i]) {
-                arrNo.push(i);
-            } else {
-                y[i].classList.remove('select-arrow-active');
+                window.translatedStringsMap = [];
+            }
+
+            if (window.__tsStack) {
+                var pageStrings = window.__tsStack.pageStrings;
+                pageStrings.forEach((translatedString) => {
+                    if (translatedString.translations && translatedString.translations.length) {
+                        translatedString.translations.forEach((translation) => {
+                            if (translation.languageId === parseInt(languageId)) {
+                                window.translatedStringsMap.push({
+                                    original: translatedString.original,
+                                    to: translation.translatedString,
+                                });
+
+                                findAndReplaceDOMText(document.body, {
+                                    find: translatedString.original,
+                                    replace: translation.translatedString,
+                                });
+                            }
+                        });
+                    }
+                });
             }
         }
-        for (i = 0; i < xl; i++) {
-            if (arrNo.indexOf(i)) {
-                x[i].classList.add('select-hide');
+
+        function closeAllSelect(elmnt) {
+            var x,
+                y,
+                i,
+                xl,
+                yl,
+                arrNo = [];
+            x = document.getElementsByClassName('select-items');
+            y = document.getElementsByClassName('select-selected');
+            xl = x.length;
+            yl = y.length;
+            for (i = 0; i < yl; i++) {
+                if (elmnt == y[i]) {
+                    arrNo.push(i);
+                } else {
+                    y[i].classList.remove('select-arrow-active');
+                }
+            }
+            for (i = 0; i < xl; i++) {
+                if (arrNo.indexOf(i)) {
+                    x[i].classList.add('select-hide');
+                }
             }
         }
-    }
 
-    window.document.addEventListener('click', closeAllSelect);
+        window.document.addEventListener('click', closeAllSelect);
+    }
 })(window, undefined);
