@@ -63,7 +63,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         xhr.onload = function () {}; // success case
                         xhr.onerror = function () {}; // failure case
 
-                        xhr.open('POST', 'http://localhost:4000/save-strings', true);
+                        xhr.open('POST', 'https://app.translatestack.com/graphqlsave-strings', true);
                         xhr.setRequestHeader('Content-Type', 'application/json');
                         xhr.send(JSON.stringify(data));
                     }, 5000);
@@ -75,7 +75,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
         xhrGet.open(
             'GET',
-            `http://localhost:4000/get-strings?apiKey=${apiKey}&href=${window.location.href}`,
+            `https://app.translatestack.com/graphqlget-strings?apiKey=${apiKey}&href=${window.location.href}`,
             true
         );
         xhrGet.setRequestHeader('Content-Type', 'application/json');
