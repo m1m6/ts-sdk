@@ -38,8 +38,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 try {
                     response = JSON.parse(responseString);
                     window.__tsStack = response;
-                } catch (e) {
-                }
+                } catch (e) {}
 
                 if (response && response.pageStrings && response.pageStrings.length) {
                     var prevLang = localStorage.getItem(TS_STACK_SELECTED_LANG);
@@ -63,15 +62,18 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         xhr.onload = function () {}; // success case
                         xhr.onerror = function () {}; // failure case
 
-                        xhr.open('POST', 'https://app.translatestack.com/graphqlsave-strings', true);
+                        xhr.open(
+                            'POST',
+                            'https://app.translatestack.com/graphqlsave-strings',
+                            true
+                        );
                         xhr.setRequestHeader('Content-Type', 'application/json');
                         xhr.send(JSON.stringify(data));
                     }, 5000);
                 }
             }
-        }; 
-        xhrGet.onerror = function (err) {
-        }; 
+        };
+        xhrGet.onerror = function (err) {};
 
         xhrGet.open(
             'GET',
@@ -154,7 +156,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 activeLanguage.id = 'ts-active-language';
                 activeLanguage.style.width = '100%';
 
-
                 if (customizer.customDivId && customizer.position === 'CUSTOM') {
                     var customElement = document.getElementById(customizer.customDivId);
 
@@ -170,20 +171,25 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     customOuterWrapper.style.height = '36px';
                     customOuterWrapper.style.verticalAlign = 'middle';
 
+                    if (customizer.customDivDirection === 'UP') {
+                        buttonLikeElement.appendChild(otherOptionsElement);
+                        buttonLikeElement.appendChild(activeLanguage);
+                    } else {
+                        buttonLikeElement.appendChild(activeLanguage);
+                        buttonLikeElement.appendChild(otherOptionsElement);
+                    }
+
                     customElement.appendChild(customOuterWrapper);
                 } else if (customizer && customizer.position === 'LEFT') {
+                    buttonLikeElement.appendChild(otherOptionsElement);
+                    buttonLikeElement.appendChild(activeLanguage);
+
                     customSelectWrapperDiv.style.setProperty('left', '100px');
                 } else if (customizer && customizer.position === 'RIGHT') {
+                    buttonLikeElement.appendChild(otherOptionsElement);
+                    buttonLikeElement.appendChild(activeLanguage);
+
                     customSelectWrapperDiv.style.setProperty('right', '100px');
-                }
-
-
-                if (customizer.customDivDirection === 'UP') {
-                    buttonLikeElement.appendChild(otherOptionsElement);
-                    buttonLikeElement.appendChild(activeLanguage);
-                } else {
-                    buttonLikeElement.appendChild(activeLanguage);
-                    buttonLikeElement.appendChild(otherOptionsElement);
                 }
 
                 window.__tsStack.populatedLanguages.forEach((language, index) => {
@@ -238,12 +244,21 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     }
 
                     var arrowElement = document.createElement('div');
+                    arrowElement.style.top = '7px';
+                    arrowElement.style.border = '6px solid transparent';
+                    arrowElement.style.borderColor = 'transparent transparent #ccc transparent';
 
-                    if (customizer.customDivDirection === 'UP') {
+                    if (
+                        customizer.customDivDirection === 'UP' &&
+                        customizer.position === 'CUSTOM'
+                    ) {
                         arrowElement.style.top = '7px';
                         arrowElement.style.border = '6px solid transparent';
                         arrowElement.style.borderColor = 'transparent transparent #ccc transparent';
-                    } else {
+                    } else if (
+                        customizer.customDivDirection === 'DOWN' &&
+                        customizer.position === 'CUSTOM'
+                    ) {
                         arrowElement.style.top = '15px';
                         arrowElement.style.border = '6px solid transparent';
                         arrowElement.style.borderColor = '#ccc transparent transparent transparent';
@@ -260,12 +275,23 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         if (otherOptionsElement.style.display === 'none') {
                             otherOptionsElement.style.display = 'block';
 
-                            if (customizer.customDivDirection === 'UP') {
+                            arrowElement.style.top = '15px';
+                            arrowElement.style.border = '6px solid transparent';
+                            arrowElement.style.borderColor =
+                                '#ccc transparent transparent transparent';
+
+                            if (
+                                customizer.customDivDirection === 'UP' &&
+                                customizer.position === 'CUSTOM'
+                            ) {
                                 arrowElement.style.top = '15px';
                                 arrowElement.style.border = '6px solid transparent';
                                 arrowElement.style.borderColor =
                                     '#ccc transparent transparent transparent';
-                            } else {
+                            } else if (
+                                customizer.customDivDirection === 'DOWN' &&
+                                customizer.position === 'CUSTOM'
+                            ) {
                                 arrowElement.style.top = '7px';
                                 arrowElement.style.border = '6px solid transparent';
                                 arrowElement.style.borderColor =
@@ -306,9 +332,17 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         e.stopPropagation();
                     });
 
-                    if (customizer.customDivDirection === 'UP') {
+                    otherOptionsElement.insertBefore(branding, otherOptionsElement.children[0]);
+
+                    if (
+                        customizer.customDivDirection === 'UP' &&
+                        customizer.position === 'CUSTOM'
+                    ) {
                         otherOptionsElement.insertBefore(branding, otherOptionsElement.children[0]);
-                    } else {
+                    } else if (
+                        customizer.customDivDirection === 'DOWN' &&
+                        customizer.position === 'CUSTOM'
+                    ) {
                         otherOptionsElement.appendChild(branding);
                     }
                 }
@@ -328,7 +362,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 if (window.__tsStack.sourceLanguage.id !== languageObject[0].id) {
                     localStorage.setItem(TS_STACK_SELECTED_LANG, JSON.stringify(languageObject[0]));
                     window.history.replaceState({}, '', `/?language=${languageObject[0].iso2}`);
-                } else { 
+                } else {
                     localStorage.removeItem(TS_STACK_SELECTED_LANG);
                     window.history.replaceState({}, '', `/`);
                 }
@@ -400,5 +434,4 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             }
         }
     }
-
 })(window, undefined);
