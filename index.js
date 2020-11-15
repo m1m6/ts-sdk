@@ -1,14 +1,14 @@
 const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
-(function (window) {
+(function () {
     window.siteStrings = [];
 
     var everythingLoaded = setTimeout(function () {
-        if (/complete/.test(document.readyState)) {
+        if (/loaded|complete/.test(document.readyState)) {
             clearInterval(everythingLoaded);
             init();
         }
-    }, 100);
+    }, 1000);
 
     function init() {
         var bodyScripts = document.querySelectorAll('body script');
@@ -56,21 +56,17 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     if (langId) {
                         applyTranslations(langId);
                     }
-                } else {
-                    setTimeout(() => {
-                        var xhr = new XMLHttpRequest();
-                        xhr.onload = function () {}; // success case
-                        xhr.onerror = function () {}; // failure case
-
-                        xhr.open(
-                            'POST',
-                            'https://app.translatestack.com/graphqlsave-strings',
-                            true
-                        );
-                        xhr.setRequestHeader('Content-Type', 'application/json');
-                        xhr.send(JSON.stringify(data));
-                    }, 5000);
                 }
+
+                setTimeout(() => {
+                    var xhr = new XMLHttpRequest();
+                    xhr.onload = function () {}; // success case
+                    xhr.onerror = function () {}; // failure case
+
+                    xhr.open('POST', 'https://app.translatestack.com/graphqlsave-strings', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.send(JSON.stringify(data));
+                }, 5000);
             }
         };
         xhrGet.onerror = function (err) {};
@@ -372,7 +368,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             if (window.translatedStringsMap.length !== 0) {
                 for (var i = 0; i < window.translatedStringsMap.length; i++) {
                     var value = window.translatedStringsMap[i];
-                    walk(document.body, false, value.to, value.original);
+                    walk(document.body, false, value.to, value.original, i);
                 }
 
                 window.translatedStringsMap = [];
@@ -380,6 +376,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
             if (window.__tsStack) {
                 var pageStrings = window.__tsStack.pageStrings;
+                debugger;
                 pageStrings.forEach((translatedString) => {
                     if (translatedString.translations && translatedString.translations.length) {
                         translatedString.translations.forEach((translation) => {
@@ -403,16 +400,15 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
         }
     }
 
-    function walk(element, onlyExtract = true, from, to) {
-        var isReplaced = false;
+    function walk(element, onlyExtract = true, from, to, globalIndex) {
         if (element && element.childNodes) {
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
                         if (onlyExtract) {
-                            walk(node, true, from, to);
+                            walk(node, true, from, to, globalIndex);
                         } else {
-                            walk(node, false, from, to);
+                            walk(node, false, from, to, globalIndex);
                         }
                         break;
                     case Node.TEXT_NODE:
@@ -421,20 +417,28 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         if (onlyExtract) {
                             window.siteStrings.push(node.textContent);
                         } else {
-                            if (trimmedString === from && !isReplaced) {
-                                node.textContent = node.textContent.replace(from, to);
-                                isReplaced = true;
+                            if (trimmedString == from) {
+                                if (globalIndex >= 0) {
+                                    if (!window.translatedStringsMap[globalIndex].isReplaced)
+                                        node.textContent = node.textContent.replace(from, to);
+                                } else {
+                                    node.textContent = node.textContent.replace(from, to);
+                                }
+
+                                if (globalIndex >= 0) {
+                                    window.translatedStringsMap[globalIndex].isReplaced = true;
+                                }
                             }
                         }
                         break;
                     case Node.DOCUMENT_NODE:
                         if (onlyExtract) {
-                            walk(node, true, from, to);
+                            walk(node, true, from, to, globalIndex);
                         } else {
-                            walk(node, false, from, to);
+                            walk(node, false, from, to, globalIndex);
                         }
                 }
             }
         }
     }
-})(window, undefined);
+})();
