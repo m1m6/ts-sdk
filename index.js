@@ -358,10 +358,20 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             if (languageObject && languageObject.length > 0) {
                 if (window.__tsStack.sourceLanguage.id !== languageObject[0].id) {
                     localStorage.setItem(TS_STACK_SELECTED_LANG, JSON.stringify(languageObject[0]));
-                    window.history.replaceState({}, '', `/?language=${languageObject[0].iso2}`);
+
+                    const params = new URLSearchParams(location.search);
+                    params.set('language', languageObject[0].iso2);
+
+                    window.history.replaceState(
+                        {},
+                        '',
+                        `${location.pathname}?${params}${location.hash}`
+                    );
+
+                    // window.history.replaceState({}, '', `/?language=${languageObject[0].iso2}`);
                 } else {
                     localStorage.removeItem(TS_STACK_SELECTED_LANG);
-                    window.history.replaceState({}, '', `/`);
+                    window.history.replaceState({}, '', `${location.pathname}?${location.hash}`);
                 }
             }
 
