@@ -330,6 +330,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     branding.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
+                        window.open('https://translatestack.com/', '_blank');
                     });
 
                     otherOptionsElement.insertBefore(branding, otherOptionsElement.children[0]);
@@ -403,6 +404,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     }
 
     function walk(element, onlyExtract = true, from, to) {
+        var isReplaced = false;
         if (element && element.childNodes) {
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
@@ -419,8 +421,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         if (onlyExtract) {
                             window.siteStrings.push(node.textContent);
                         } else {
-                            if (trimmedString == from) {
+                            if (trimmedString === from && !isReplaced) {
                                 node.textContent = node.textContent.replace(from, to);
+                                isReplaced = true;
                             }
                         }
                         break;
