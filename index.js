@@ -155,7 +155,8 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 if (customizer.customDivId && customizer.position === 'CUSTOM') {
                     var customElement = document.getElementById(customizer.customDivId);
 
-                    customSelectWrapperDiv.style.position = 'absolute';
+                    // customSelectWrapperDiv.style.position = 'absolute';
+                    customSelectWrapperDiv.style.position = 'relative';
                     if (customizer.customDivDirection === 'UP')
                         customSelectWrapperDiv.style.bottom = '0px';
                     else customSelectWrapperDiv.style.top = '0px';
@@ -386,7 +387,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
             if (window.__tsStack) {
                 var pageStrings = window.__tsStack.pageStrings;
-                debugger;
                 pageStrings.forEach((translatedString) => {
                     if (translatedString.translations && translatedString.translations.length) {
                         translatedString.translations.forEach((translation) => {
