@@ -448,6 +448,8 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                                 globalIndex
                                             ].isReplaced = true;
                                         }
+
+                                        return;
                                     }
                                 }
                             }
