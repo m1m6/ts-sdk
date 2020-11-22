@@ -11,11 +11,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     }, 1000);
 
     function init() {
-        var bodyScripts = document.querySelectorAll('body script');
-        for (var i = 0; i < bodyScripts.length; i++) {
-            bodyScripts[i].remove();
-        }
-
         walk(document.body, true);
 
         var tssScript = document.getElementById('tss-script');
@@ -422,21 +417,39 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         }
                         break;
                     case Node.TEXT_NODE:
-                        var trimmedString = node.textContent ? node.textContent.trim() : '';
-
-                        if (onlyExtract) {
-                            window.siteStrings.push(node.textContent);
-                        } else {
-                            if (trimmedString == from) {
-                                if (globalIndex >= 0) {
-                                    if (!window.translatedStringsMap[globalIndex].isReplaced)
-                                        node.textContent = node.textContent.replace(from, to);
+                        var parentNodeName = node.parentNode.nodeName.toUpperCase();
+                        if (
+                            parentNodeName !== 'SCRIPT' &&
+                            parentNodeName !== 'STYLE' &&
+                            parentNodeName !== 'NOSCRIPT' &&
+                            parentNodeName !== 'IFRAME' &&
+                            parentNodeName !== 'HEAD'
+                        ) {
+                            var trimmedString = node.textContent ? node.textContent.trim() : '';
+                            if (trimmedString.length > 0) {
+                                if (onlyExtract) {
+                                    window.siteStrings.push(trimmedString);
                                 } else {
-                                    node.textContent = node.textContent.replace(from, to);
-                                }
+                                    if (trimmedString == from) {
+                                        trimmedString = trimmedString.str.split('\n').join(' ');
+                                        if (globalIndex >= 0) {
+                                            if (
+                                                !window.translatedStringsMap[globalIndex].isReplaced
+                                            )
+                                                node.textContent = node.textContent.replace(
+                                                    from,
+                                                    to
+                                                );
+                                        } else {
+                                            node.textContent = node.textContent.replace(from, to);
+                                        }
 
-                                if (globalIndex >= 0) {
-                                    window.translatedStringsMap[globalIndex].isReplaced = true;
+                                        if (globalIndex >= 0) {
+                                            window.translatedStringsMap[
+                                                globalIndex
+                                            ].isReplaced = true;
+                                        }
+                                    }
                                 }
                             }
                         }
