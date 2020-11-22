@@ -431,7 +431,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     window.siteStrings.push(trimmedString);
                                 } else {
                                     if (trimmedString == from) {
-                                        trimmedString = trimmedString.str.split('\n').join(' ');
                                         if (globalIndex >= 0) {
                                             if (
                                                 !window.translatedStringsMap[globalIndex].isReplaced
