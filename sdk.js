@@ -387,7 +387,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         translatedString.translations.forEach((translation) => {
                             console.log('index', index);
                             if (translation.languageId === parseInt(languageId)) {
-                                window.translatedStringsMap.push({
+                                var itemIndex = window.translatedStringsMap.push({
                                     original: translatedString.original,
                                     to: translation.translatedString,
                                 });
@@ -397,7 +397,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     false,
                                     translatedString.original,
                                     translation.translatedString,
-                                    index
+                                    itemIndex - 1
                                 );
                             }
                         });
@@ -443,11 +443,14 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                                     from,
                                                     to
                                                 );
-                                                console.log(" String1 ", from  === trimmedString, window.translatedStringsMap[globalIndex]);
-
+                                            console.log(
+                                                ' String1 ',
+                                                from === trimmedString,
+                                                window.translatedStringsMap[globalIndex]
+                                            );
                                         } else {
                                             console.log('Fallback case');
-                                            console.log(" String2 ", trimmedString, globalIndex);
+                                            console.log(' String2 ', trimmedString, globalIndex);
 
                                             node.textContent = node.textContent.replace(from, to);
                                         }
