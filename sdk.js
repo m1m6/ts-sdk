@@ -382,11 +382,10 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
             if (window.__tsStack) {
                 var pageStrings = window.__tsStack.pageStrings;
-                pageStrings.forEach((translatedString) => {
+                pageStrings.forEach((translatedString, index) => {
                     if (translatedString.translations && translatedString.translations.length) {
-                        var cnt = 0
-                        translatedString.translations.forEach((translation, index) => {
-                            console.log("index", cnt);
+                        translatedString.translations.forEach((translation) => {
+                            console.log("index", index);
                             if (translation.languageId === parseInt(languageId)) {
                                 window.translatedStringsMap.push({
                                     original: translatedString.original,
@@ -398,7 +397,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     false,
                                     translatedString.original,
                                     translation.translatedString,
-                                    cnt
+                                    index
                                 );
                             }
 
