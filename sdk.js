@@ -374,7 +374,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             if (window.translatedStringsMap.length !== 0) {
                 for (var i = 0; i < window.translatedStringsMap.length; i++) {
                     var value = window.translatedStringsMap[i];
-                    console.log(" remove ", value , i);
+                    console.log(' remove ', value, i);
 
                     walk(document.body, false, value.to, value.original, i);
                 }
@@ -435,20 +435,22 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     window.siteStrings.push(trimmedString);
                                 } else {
                                     if (trimmedString == from) {
-                                        if (globalIndex >= 0) {
-                                            if (
-                                                window.translatedStringsMap[globalIndex] &&
-                                                !window.translatedStringsMap[globalIndex].isReplaced
-                                            )
-                                                node.textContent = node.textContent.replace(
-                                                    from,
-                                                    to
-                                                );
+                                        if (
+                                            globalIndex >= 0 &&
+                                            window.translatedStringsMap[globalIndex] &&
+                                            !window.translatedStringsMap[globalIndex].isReplaced
+                                        ) {
+                                            node.textContent = node.textContent.replace(from, to);
                                             console.log(
                                                 ' String1 ',
                                                 from === trimmedString,
                                                 window.translatedStringsMap[globalIndex]
                                             );
+
+                                            // window.translatedStringsMap[
+                                            //     globalIndex
+                                            // ].isReplaced = true;
+
                                         } else {
                                             console.log('Fallback case');
                                             console.log(' String2 ', trimmedString, globalIndex);
