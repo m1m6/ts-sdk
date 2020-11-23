@@ -374,6 +374,8 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             if (window.translatedStringsMap.length !== 0) {
                 for (var i = 0; i < window.translatedStringsMap.length; i++) {
                     var value = window.translatedStringsMap[i];
+                    console.log(" remove ", value , i);
+
                     walk(document.body, false, value.to, value.original, i);
                 }
 
@@ -385,7 +387,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 pageStrings.forEach((translatedString, index) => {
                     if (translatedString.translations && translatedString.translations.length) {
                         translatedString.translations.forEach((translation) => {
-                            console.log('index', index);
                             if (translation.languageId === parseInt(languageId)) {
                                 var itemIndex = window.translatedStringsMap.push({
                                     original: translatedString.original,
