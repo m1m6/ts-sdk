@@ -408,6 +408,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     }
 
     function walk(element, onlyExtract = true, from, to, globalIndex) {
+        console.log("globalIndex", globalIndex);
         if (element && element.childNodes) {
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
