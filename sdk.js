@@ -376,7 +376,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     var value = window.translatedStringsMap[i];
                     console.log(' remove ', value, i);
 
-                    walk(document.body, false, value.to, value.original, i);
+                    walk(document.body, false, value.to, value.original, i, true);
                 }
 
                 window.translatedStringsMap = [];
@@ -408,16 +408,16 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
         }
     }
 
-    function walk(element, onlyExtract = true, from, to, globalIndex) {
+    function walk(element, onlyExtract = true, from, to, globalIndex, shouldReturnBack = false) {
         // console.log("globalIndex", globalIndex);
         if (element && element.childNodes) {
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
                         if (onlyExtract) {
-                            walk(node, true, from, to, globalIndex);
+                            walk(node, true, from, to, globalIndex, shouldReturnBack);
                         } else {
-                            walk(node, false, from, to, globalIndex);
+                            walk(node, false, from, to, globalIndex, shouldReturnBack);
                         }
                         break;
                     case Node.TEXT_NODE:
@@ -451,7 +451,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                             //     globalIndex
                                             // ].isReplaced = true;
 
-                                        } else {
+                                        }  
+                                        
+                                        if (shouldReturnBack) {
                                             console.log('Fallback case');
                                             console.log(' String2 ', trimmedString, globalIndex);
 
@@ -475,9 +477,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         break;
                     case Node.DOCUMENT_NODE:
                         if (onlyExtract) {
-                            walk(node, true, from, to, globalIndex);
+                            walk(node, true, from, to, globalIndex, shouldReturnBack);
                         } else {
-                            walk(node, false, from, to, globalIndex);
+                            walk(node, false, from, to, globalIndex, shouldReturnBack);
                         }
                 }
             }
