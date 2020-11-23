@@ -443,7 +443,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                                     from,
                                                     to
                                                 );
-                                                console.log(" String1 ", trimmedString, globalIndex);
+                                                console.log(" String1 ", from , trimmedString, globalIndex);
 
                                         } else {
                                             console.log('Fallback case');
