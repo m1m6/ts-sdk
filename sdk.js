@@ -385,6 +385,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 pageStrings.forEach((translatedString) => {
                     if (translatedString.translations && translatedString.translations.length) {
                         translatedString.translations.forEach((translation, index) => {
+                            console.log("index", index);
                             if (translation.languageId === parseInt(languageId)) {
                                 window.translatedStringsMap.push({
                                     original: translatedString.original,
@@ -407,7 +408,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     }
 
     function walk(element, onlyExtract = true, from, to, globalIndex) {
-        console.log(from, to, globalIndex);
         if (element && element.childNodes) {
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
