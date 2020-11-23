@@ -384,8 +384,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 var pageStrings = window.__tsStack.pageStrings;
                 pageStrings.forEach((translatedString) => {
                     if (translatedString.translations && translatedString.translations.length) {
+                        var cnt = 0
                         translatedString.translations.forEach((translation, index) => {
-                            console.log("index", index);
+                            console.log("index", cnt);
                             if (translation.languageId === parseInt(languageId)) {
                                 window.translatedStringsMap.push({
                                     original: translatedString.original,
@@ -397,9 +398,11 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     false,
                                     translatedString.original,
                                     translation.translatedString,
-                                    index
+                                    cnt
                                 );
                             }
+
+                            cnt++
                         });
                     }
                 });
@@ -442,6 +445,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                                     to
                                                 );
                                         } else {
+                                            console.log("Fallback case");
                                             node.textContent = node.textContent.replace(from, to);
                                         }
 
