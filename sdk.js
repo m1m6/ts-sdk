@@ -401,7 +401,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                 );
                             }
 
-                            cnt++
                         });
                     }
                 });
