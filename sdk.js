@@ -385,7 +385,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 pageStrings.forEach((translatedString, index) => {
                     if (translatedString.translations && translatedString.translations.length) {
                         translatedString.translations.forEach((translation) => {
-                            console.log("index", index);
+                            console.log('index', index);
                             if (translation.languageId === parseInt(languageId)) {
                                 window.translatedStringsMap.push({
                                     original: translatedString.original,
@@ -400,7 +400,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     index
                                 );
                             }
-
                         });
                     }
                 });
@@ -436,6 +435,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     if (trimmedString == from) {
                                         if (globalIndex >= 0) {
                                             if (
+                                                window.translatedStringsMap[globalIndex] &&
                                                 !window.translatedStringsMap[globalIndex].isReplaced
                                             )
                                                 node.textContent = node.textContent.replace(
@@ -443,11 +443,14 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                                     to
                                                 );
                                         } else {
-                                            console.log("Fallback case");
+                                            console.log('Fallback case');
                                             node.textContent = node.textContent.replace(from, to);
                                         }
 
-                                        if (globalIndex >= 0) {
+                                        if (
+                                            globalIndex >= 0 &&
+                                            window.translatedStringsMap[globalIndex]
+                                        ) {
                                             window.translatedStringsMap[
                                                 globalIndex
                                             ].isReplaced = true;
