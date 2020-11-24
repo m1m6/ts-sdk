@@ -374,7 +374,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             if (window.translatedStringsMap.length !== 0) {
                 for (var i = 0; i < window.translatedStringsMap.length; i++) {
                     var value = window.translatedStringsMap[i];
-                    walk(document.body, false, value.to, value.original, i);
+                    walk(document.body, false, value.to, value.original, i, true);
                 }
 
                 window.translatedStringsMap = [];
@@ -382,11 +382,11 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
             if (window.__tsStack) {
                 var pageStrings = window.__tsStack.pageStrings;
-                pageStrings.forEach((translatedString) => {
+                pageStrings.forEach((translatedString, index) => {
                     if (translatedString.translations && translatedString.translations.length) {
-                        translatedString.translations.forEach((translation, index) => {
+                        translatedString.translations.forEach((translation) => {
                             if (translation.languageId === parseInt(languageId)) {
-                                window.translatedStringsMap.push({
+                                var itemIndex = window.translatedStringsMap.push({
                                     original: translatedString.original,
                                     to: translation.translatedString,
                                 });
@@ -396,7 +396,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     false,
                                     translatedString.original,
                                     translation.translatedString,
-                                    index
+                                    itemIndex - 1
                                 );
                             }
                         });
@@ -406,16 +406,15 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
         }
     }
 
-    function walk(element, onlyExtract = true, from, to, globalIndex) {
-        console.log(from, to, globalIndex);
+    function walk(element, onlyExtract = true, from, to, globalIndex, shouldReturnBack = false) {
         if (element && element.childNodes) {
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
                         if (onlyExtract) {
-                            walk(node, true, from, to, globalIndex);
+                            walk(node, true, from, to, globalIndex, shouldReturnBack);
                         } else {
-                            walk(node, false, from, to, globalIndex);
+                            walk(node, false, from, to, globalIndex, shouldReturnBack);
                         }
                         break;
                     case Node.TEXT_NODE:
@@ -433,19 +432,22 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     window.siteStrings.push(trimmedString);
                                 } else {
                                     if (trimmedString == from) {
-                                        if (globalIndex >= 0) {
-                                            if (
-                                                !window.translatedStringsMap[globalIndex].isReplaced
-                                            )
-                                                node.textContent = node.textContent.replace(
-                                                    from,
-                                                    to
-                                                );
-                                        } else {
+                                        if (
+                                            globalIndex >= 0 &&
+                                            window.translatedStringsMap[globalIndex] &&
+                                            !window.translatedStringsMap[globalIndex].isReplaced
+                                        ) {
+                                            node.textContent = node.textContent.replace(from, to);
+                                        }  
+                                        
+                                        if (shouldReturnBack) {
                                             node.textContent = node.textContent.replace(from, to);
                                         }
 
-                                        if (globalIndex >= 0) {
+                                        if (
+                                            globalIndex >= 0 &&
+                                            window.translatedStringsMap[globalIndex]
+                                        ) {
                                             window.translatedStringsMap[
                                                 globalIndex
                                             ].isReplaced = true;
@@ -459,9 +461,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         break;
                     case Node.DOCUMENT_NODE:
                         if (onlyExtract) {
-                            walk(node, true, from, to, globalIndex);
+                            walk(node, true, from, to, globalIndex, shouldReturnBack);
                         } else {
-                            walk(node, false, from, to, globalIndex);
+                            walk(node, false, from, to, globalIndex, shouldReturnBack);
                         }
                 }
             }

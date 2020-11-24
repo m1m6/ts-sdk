@@ -374,8 +374,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             if (window.translatedStringsMap.length !== 0) {
                 for (var i = 0; i < window.translatedStringsMap.length; i++) {
                     var value = window.translatedStringsMap[i];
-                    console.log(' remove ', value, i);
-
                     walk(document.body, false, value.to, value.original, i, true);
                 }
 
@@ -409,7 +407,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     }
 
     function walk(element, onlyExtract = true, from, to, globalIndex, shouldReturnBack = false) {
-        // console.log("globalIndex", globalIndex);
         if (element && element.childNodes) {
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
@@ -441,22 +438,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                             !window.translatedStringsMap[globalIndex].isReplaced
                                         ) {
                                             node.textContent = node.textContent.replace(from, to);
-                                            console.log(
-                                                ' String1 ',
-                                                from === trimmedString,
-                                                window.translatedStringsMap[globalIndex]
-                                            );
-
-                                            // window.translatedStringsMap[
-                                            //     globalIndex
-                                            // ].isReplaced = true;
-
                                         }  
                                         
                                         if (shouldReturnBack) {
-                                            console.log('Fallback case');
-                                            console.log(' String2 ', trimmedString, globalIndex);
-
                                             node.textContent = node.textContent.replace(from, to);
                                         }
 
