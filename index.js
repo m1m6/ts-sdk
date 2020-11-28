@@ -39,10 +39,23 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     var prevLang = localStorage.getItem(TS_STACK_SELECTED_LANG);
                     var langId = null;
 
-                    if (prevLang && window.location.search.includes('?language')) {
+                    if (prevLang /*&& window.location.search.includes('?language')*/) {
                         var parsedLangObject = JSON.parse(prevLang);
                         if (parsedLangObject) {
                             langId = parsedLangObject.id;
+                        }
+                    } else {
+                        var browserLanguage = getFirstBrowserLanguage();
+                        if (browserLanguage && browserLanguage.length > 3) {
+                            var languageIso2 = browserLanguage.split('-')[0];
+
+                            if (languageIso2.length === 2) {
+                                window.__tsStack.populatedLanguages.forEach((l) => {
+                                    if (l.isActive && l.iso2 === languageIso2) {
+                                        langId = l.id;
+                                    }
+                                });
+                            }
                         }
                     }
 
@@ -51,17 +64,21 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     if (langId) {
                         applyTranslations(langId);
                     }
+                } else {
+                    setTimeout(() => {
+                        var xhr = new XMLHttpRequest();
+                        xhr.onload = function () {}; // success case
+                        xhr.onerror = function () {}; // failure case
+
+                        xhr.open(
+                            'POST',
+                            'https://app.translatestack.com/graphqlsave-strings',
+                            true
+                        );
+                        xhr.setRequestHeader('Content-Type', 'application/json');
+                        xhr.send(JSON.stringify(data));
+                    }, 5000);
                 }
-
-                setTimeout(() => {
-                    var xhr = new XMLHttpRequest();
-                    xhr.onload = function () {}; // success case
-                    xhr.onerror = function () {}; // failure case
-
-                    xhr.open('POST', 'https://app.translatestack.com/graphqlsave-strings', true);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.send(JSON.stringify(data));
-                }, 5000);
             }
         };
         xhrGet.onerror = function (err) {};
@@ -438,8 +455,8 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                             !window.translatedStringsMap[globalIndex].isReplaced
                                         ) {
                                             node.textContent = node.textContent.replace(from, to);
-                                        }  
-                                        
+                                        }
+
                                         if (shouldReturnBack) {
                                             node.textContent = node.textContent.replace(from, to);
                                         }
@@ -469,4 +486,36 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             }
         }
     }
+
+    var getFirstBrowserLanguage = function () {
+        var nav = window.navigator,
+            browserLanguagePropertyKeys = [
+                'language',
+                'browserLanguage',
+                'systemLanguage',
+                'userLanguage',
+            ],
+            i,
+            language;
+
+        // support for HTML 5.1 "navigator.languages"
+        if (Array.isArray(nav.languages)) {
+            for (i = 0; i < nav.languages.length; i++) {
+                language = nav.languages[i];
+                if (language && language.length) {
+                    return language;
+                }
+            }
+        }
+
+        // support for other well known properties in browsers
+        for (i = 0; i < browserLanguagePropertyKeys.length; i++) {
+            language = nav[browserLanguagePropertyKeys[i]];
+            if (language && language.length) {
+                return language;
+            }
+        }
+
+        return null;
+    };
 })();
