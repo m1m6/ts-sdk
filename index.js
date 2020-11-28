@@ -46,7 +46,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         }
                     } else {
                         var browserLanguage = getFirstBrowserLanguage();
-                        if (browserLanguage && browserLanguage.length > 3) {
+                        if (browserLanguage && browserLanguage.length >= 2) {
                             var languageIso2 = browserLanguage.split('-')[0];
 
                             if (languageIso2.length === 2) {
