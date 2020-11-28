@@ -51,7 +51,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
                             if (languageIso2.length === 2) {
                                 window.__tsStack.populatedLanguages.forEach((l) => {
-                                    if (l.isActive && l.iso2 === languageIso2) {
+                                    if (l.iso2 === languageIso2) {
                                         langId = l.id;
                                     }
                                 });
