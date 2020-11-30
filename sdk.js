@@ -195,7 +195,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
                     customSelectWrapperDiv.style.setProperty('left', '100px');
                 } else {
-                    customizer.position = "RIGHT"
+                    window.__tsStack.customizer.position = "RIGHT"
                     buttonLikeElement.appendChild(otherOptionsElement);
                     buttonLikeElement.appendChild(activeLanguage);
 
