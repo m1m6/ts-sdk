@@ -448,7 +448,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                 if (onlyExtract) {
                                     window.siteStrings.push(trimmedString);
                                 } else {
-                                    if (trimmedString == from) {
+                                    if (trimmedString === from.trim()) {
                                         if (
                                             globalIndex >= 0 &&
                                             window.translatedStringsMap[globalIndex] &&
