@@ -121,7 +121,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     }
                 });
 
-                if (window.__tsStack.sourceLanguage && !listContainSourceLang) {
+                if (window.__tsStack.sourceLanguage) {
                     window.__tsStack.populatedLanguages.unshift({
                         ...window.__tsStack.sourceLanguage,
                         isActive: true,
