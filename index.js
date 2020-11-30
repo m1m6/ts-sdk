@@ -164,9 +164,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 activeLanguage.id = 'ts-active-language';
                 activeLanguage.style.width = '100%';
 
-                if (customizer.customDivId && customizer.position === 'CUSTOM') {
-                    var customElement = document.getElementById(customizer.customDivId);
+                var customElement = document.getElementById(customizer.customDivId);
 
+                if (customizer.customDivId && customizer.position === 'CUSTOM' && customElement) {
                     // customSelectWrapperDiv.style.position = 'absolute';
                     customSelectWrapperDiv.style.position = 'relative';
                     if (customizer.customDivDirection === 'UP')
@@ -194,7 +194,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     buttonLikeElement.appendChild(activeLanguage);
 
                     customSelectWrapperDiv.style.setProperty('left', '100px');
-                } else if (customizer && customizer.position === 'RIGHT') {
+                } else {
                     buttonLikeElement.appendChild(otherOptionsElement);
                     buttonLikeElement.appendChild(activeLanguage);
 
