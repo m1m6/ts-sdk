@@ -3,12 +3,12 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 (function () {
     window.siteStrings = [];
 
-    var everythingLoaded = setTimeout(function () {
-        if (/loaded|complete/.test(document.readyState)) {
-            clearInterval(everythingLoaded);
-            init();
-        }
-    }, 1000);
+    // var everythingLoaded = setTimeout(function () {
+    //     if (/loaded|complete/.test(document.readyState)) {
+    //         clearInterval(everythingLoaded);
+    //         init();
+    //     }
+    // }, 1000);
 
     function init() {
         walk(document.body, true);
@@ -424,6 +424,8 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
         }
     }
 
+    window.initTsStackTranslator = init();
+    
     function walk(element, onlyExtract = true, from, to, globalIndex, shouldReturnBack = false) {
         if (element && element.childNodes) {
             for (let node of element.childNodes) {
