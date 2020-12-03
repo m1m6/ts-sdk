@@ -481,8 +481,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
-                        if (node.name)
-                        console.log("node.name1", node.content);
+                        if (node.name) console.log('node.name1', node.content);
 
                         var obj = node.attributes;
                         var array = obj ? Array.prototype.slice.call(obj) : [];
@@ -534,29 +533,42 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                 }
                             }
 
+                            if (node.name === 'description') {
+                                if (node.content.trim() === from.trim()) {
+                                    if (
+                                        globalIndex >= 0 &&
+                                        window.translatedStringsMap[globalIndex] &&
+                                        !window.translatedStringsMap[globalIndex].isReplaced
+                                    ) {
+                                        node.content = node.content.replace(from, to);
+                                    }
+
+                                    if (shouldReturnBack) {
+                                        node.content = node.content.replace(from, to);
+                                    }
+
+                                    if (
+                                        globalIndex >= 0 &&
+                                        window.translatedStringsMap[globalIndex]
+                                    ) {
+                                        window.translatedStringsMap[globalIndex].isReplaced = true;
+                                    }
+                                    return;
+                                }
+                            }
+
                             walk(node, false, from, to, globalIndex, shouldReturnBack);
                         }
                         break;
                     case Node.TEXT_NODE:
-                        if (node.name)
-                        console.log("node.name1", node.content);
-
                         var parentNodeName = node.parentNode.nodeName.toUpperCase();
                         if (
                             parentNodeName !== 'SCRIPT' &&
                             parentNodeName !== 'STYLE' &&
                             parentNodeName !== 'NOSCRIPT' &&
-                            parentNodeName !== 'IFRAME' 
-                            // &&
-                            // parentNodeName !== 'HEAD'
+                            parentNodeName !== 'IFRAME' &&
+                            parentNodeName !== 'HEAD'
                         ) {
-                            // console.log("ATTRIBUTE", );
-                            if (node.name)
-                            console.log("node.name2", node.content);
-                            // console.log("node.nodeType", node.nodeType);
-                            // console.log("node.localName", node.localName);
-
-                            
                             var trimmedString = node.textContent ? node.textContent.trim() : '';
                             if (trimmedString.length > 0) {
                                 if (onlyExtract) {
@@ -568,27 +580,11 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                             window.translatedStringsMap[globalIndex] &&
                                             !window.translatedStringsMap[globalIndex].isReplaced
                                         ) {
-                                       
-
-                                            if (node.name === 'description') {
-                                                node.content = node.content.replace(from, to);
-                                            } else {
-                                                node.textContent = node.textContent.replace(
-                                                    from,
-                                                    to
-                                                );
-                                            }
+                                            node.textContent = node.textContent.replace(from, to);
                                         }
 
                                         if (shouldReturnBack) {
-                                            if (node.name === 'description') {
-                                                node.content = node.content.replace(from, to);
-                                            } else {
-                                                node.textContent = node.textContent.replace(
-                                                    from,
-                                                    to
-                                                );
-                                            }
+                                            node.textContent = node.textContent.replace(from, to);
                                         }
 
                                         if (
@@ -607,14 +603,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         }
                         break;
 
-                    // case Node.ATTRIBUTE_NODE:
-                    //     console.log(' node.textContent', node.textContent);
-                    //     console.log(' node.textContent', node);
-
                     case Node.DOCUMENT_NODE:
-                        if (node.name)
-                        console.log("node.name4", node.content);
-
                         if (onlyExtract) {
                             walk(node, true, from, to, globalIndex, shouldReturnBack);
                         } else {
