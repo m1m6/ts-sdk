@@ -18,6 +18,14 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     `);
 
     function init() {
+        addStyle(`
+        @font-face {
+            font-family: 'Open Sans';
+            src: local('Open Sans'), url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+            font-style: normal;
+        }
+    `);
+
         walk(document.body, true);
 
         var tssScript = document.getElementById('tss-script');
