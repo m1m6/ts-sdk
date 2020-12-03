@@ -9,22 +9,15 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     //         init();
     //     }
     // }, 1000);
-    addStyle(`
-        @font-face {
-            font-family: 'Open Sans';
-            src: local('Open Sans'), url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
-            font-style: normal;
-        }
-    `);
 
     function init() {
-        addStyle(`
-        @font-face {
-            font-family: 'Open Sans';
-            src: local('Open Sans'), url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
-            font-style: normal;
-        }
-    `);
+        var head = document.getElementsByTagName('head')[0];
+    
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap';
+
+        head.appendChild(link);
 
         walk(document.body, true);
 
