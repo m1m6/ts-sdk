@@ -481,6 +481,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
+                        if (node.name)
+                        console.log("node.name1", node.content);
+
                         var obj = node.attributes;
                         var array = obj ? Array.prototype.slice.call(obj) : [];
 
@@ -609,6 +612,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     //     console.log(' node.textContent', node);
 
                     case Node.DOCUMENT_NODE:
+                        if (node.name)
+                        console.log("node.name4", node.content);
+
                         if (onlyExtract) {
                             walk(node, true, from, to, globalIndex, shouldReturnBack);
                         } else {
