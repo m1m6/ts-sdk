@@ -556,7 +556,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                             window.translatedStringsMap[globalIndex] &&
                                             !window.translatedStringsMap[globalIndex].isReplaced
                                         ) {
-                                            console.log("node.name", node.nodeName);
+                                            console.log("node.name", node.name);
+                                            console.log("node.nodeType", node.nodeType);
+
                                             if (node.name === 'description') {
                                                 node.content = node.content.replace(from, to);
                                             } else {
