@@ -488,11 +488,11 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                             window.translatedStringsMap[globalIndex] &&
                                             !window.translatedStringsMap[globalIndex].isReplaced
                                         ) {
-                                            node.textContent = node.textContent.replace(from, to);
+                                            nodeAttr.textContent = nodeAttr.textContent.replace(from, to);
                                         }
 
                                         if (shouldReturnBack) {
-                                            node.textContent = node.textContent.replace(from, to);
+                                            nodeAttr.textContent = nodeAttr.textContent.replace(from, to);
                                         }
 
                                         if (
