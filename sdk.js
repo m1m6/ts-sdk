@@ -544,7 +544,11 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                             parentNodeName !== 'HEAD'
                         ) {
                             // console.log("ATTRIBUTE", );
+                            console.log("node.name", node.nodeName);
+                            console.log("node.nodeType", node.nodeType);
+                            console.log("node.localName", node.localName);
 
+                            
                             var trimmedString = node.textContent ? node.textContent.trim() : '';
                             if (trimmedString.length > 0) {
                                 if (onlyExtract) {
@@ -556,11 +560,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                             window.translatedStringsMap[globalIndex] &&
                                             !window.translatedStringsMap[globalIndex].isReplaced
                                         ) {
-                                            console.log("node.name", node.nodeName);
-                                            console.log("node.nodeType", node.nodeType);
-                                            console.log("node.localName", node.localName);
-
-                                            
+                                       
 
                                             if (node.name === 'description') {
                                                 node.content = node.content.replace(from, to);
