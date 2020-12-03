@@ -459,7 +459,13 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     itemIndex - 1
                                 );
 
-                                walk(document.head, false, value.to, value.original, i, true);
+                                walk(
+                                    document.head,
+                                    false,
+                                    translatedString.original,
+                                    translation.translatedString,
+                                    itemIndex - 1
+                                );
 
                             }
                         });
