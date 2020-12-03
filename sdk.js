@@ -544,9 +544,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                             parentNodeName !== 'HEAD'
                         ) {
                             // console.log("ATTRIBUTE", );
-                            console.log("node.name", node.nodeName);
-                            console.log("node.nodeType", node.nodeType);
-                            console.log("node.localName", node.localName);
+                            console.log("node.name", node.content);
+                            // console.log("node.nodeType", node.nodeType);
+                            // console.log("node.localName", node.localName);
 
                             
                             var trimmedString = node.textContent ? node.textContent.trim() : '';
