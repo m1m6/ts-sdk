@@ -466,7 +466,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     translation.translatedString,
                                     itemIndex - 1
                                 );
-
                             }
                         });
                     }
@@ -557,11 +556,25 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                             window.translatedStringsMap[globalIndex] &&
                                             !window.translatedStringsMap[globalIndex].isReplaced
                                         ) {
-                                            node.textContent = node.textContent.replace(from, to);
+                                            if (node.name === 'description') {
+                                                node.content = node.content.replace(from, to);
+                                            } else {
+                                                node.textContent = node.textContent.replace(
+                                                    from,
+                                                    to
+                                                );
+                                            }
                                         }
 
                                         if (shouldReturnBack) {
-                                            node.textContent = node.textContent.replace(from, to);
+                                            if (node.name === 'description') {
+                                                node.content = node.content.replace(from, to);
+                                            } else {
+                                                node.textContent = node.textContent.replace(
+                                                    from,
+                                                    to
+                                                );
+                                            }
                                         }
 
                                         if (
@@ -628,7 +641,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     };
 
     // function applyHeaderTranslations(langId) {
-        
 
     //     pageStrings.forEach((translatedString, index) => {
     //         if (translatedString.translations && translatedString.translations.length) {
