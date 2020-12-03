@@ -540,8 +540,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                             parentNodeName !== 'SCRIPT' &&
                             parentNodeName !== 'STYLE' &&
                             parentNodeName !== 'NOSCRIPT' &&
-                            parentNodeName !== 'IFRAME' &&
-                            parentNodeName !== 'HEAD'
+                            parentNodeName !== 'IFRAME' 
+                            // &&
+                            // parentNodeName !== 'HEAD'
                         ) {
                             // console.log("ATTRIBUTE", );
                             console.log("node.name", node.content);
