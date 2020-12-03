@@ -472,6 +472,12 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                             parentNodeName !== 'IFRAME' &&
                             parentNodeName !== 'HEAD'
                         ) {
+                            // console.log("ATTRIBUTE", );
+
+                            var obj = node.attributes;
+                            var array = obj ? Array.prototype.slice.call(obj) : [];
+                            console.log('ARRAY', array);
+                            
                             var trimmedString = node.textContent ? node.textContent.trim() : '';
                             if (trimmedString.length > 0) {
                                 if (onlyExtract) {
@@ -506,9 +512,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         }
                         break;
 
-                    case Node.ATTRIBUTE_NODE:
-                        console.log(' node.textContent', node.textContent);
-                        console.log(' node.textContent', node);
+                    // case Node.ATTRIBUTE_NODE:
+                    //     console.log(' node.textContent', node.textContent);
+                    //     console.log(' node.textContent', node);
 
                     case Node.DOCUMENT_NODE:
                         if (onlyExtract) {
