@@ -15,7 +15,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             src: local('AnoRegular'), url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap') format('truetype');
             font-style: normal;
         }
-    `)
+    `);
 
     function init() {
         walk(document.body, true);
@@ -118,7 +118,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     customSelectWrapperDiv.style.direction = 'ltr';
                     customSelectWrapperDiv.style.position = 'fixed';
                     customSelectWrapperDiv.style.bottom = '0px';
-                    customSelectWrapperDiv.style.fontFamily = "Open Sans"
+                    customSelectWrapperDiv.style.fontFamily = 'Open Sans';
                 }
 
                 var listContainSourceLang = false;
@@ -152,7 +152,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
                 var otherOptionsElement = document.createElement('div');
                 otherOptionsElement.style.display = 'none';
-                otherOptionsElement.style.fontFamily = "Open Sans"
+                otherOptionsElement.style.fontFamily = 'Open Sans';
 
                 var buttonLikeElement = document.createElement('div');
                 buttonLikeElement.style.cursor = 'pointer';
@@ -160,7 +160,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 buttonLikeElement.style.border = 'solid 1px #e8eaef';
                 buttonLikeElement.style.padding = '0px';
                 buttonLikeElement.style.margin = '0px';
-                buttonLikeElement.style.fontFamily = "Open Sans"
+                buttonLikeElement.style.fontFamily = 'Open Sans';
 
                 buttonLikeElement.style.width =
                     customizer.text === 'TEXT_ONLY' || customizer.text === 'SHORTENED'
@@ -174,12 +174,12 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 var activeLanguage = document.createElement('div');
                 activeLanguage.id = 'ts-active-language';
                 activeLanguage.style.width = '100%';
-                activeLanguage.style.fontFamily = "Open Sans"
+                activeLanguage.style.fontFamily = 'Open Sans';
 
                 var customElement = document.getElementById(customizer.customDivId);
-                customElement.style.fontFamily = "Open Sans"
 
                 if (customizer.customDivId && customizer.position === 'CUSTOM' && customElement) {
+                    customElement.style.fontFamily = 'Open Sans';
                     // customSelectWrapperDiv.style.position = 'absolute';
                     customSelectWrapperDiv.style.position = 'relative';
                     if (customizer.customDivDirection === 'UP')
@@ -192,7 +192,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     customOuterWrapper.style.display = 'inline-block';
                     customOuterWrapper.style.height = '36px';
                     customOuterWrapper.style.verticalAlign = 'middle';
-                    customOuterWrapper.style.fontFamily = "Open Sans"
+                    customOuterWrapper.style.fontFamily = 'Open Sans';
 
                     if (customizer.customDivDirection === 'UP') {
                         buttonLikeElement.appendChild(otherOptionsElement);
@@ -209,7 +209,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
                     customSelectWrapperDiv.style.setProperty('left', '100px');
                 } else {
-                    window.__tsStack.customizer.position = "RIGHT"
+                    window.__tsStack.customizer.position = 'RIGHT';
                     buttonLikeElement.appendChild(otherOptionsElement);
                     buttonLikeElement.appendChild(activeLanguage);
 
@@ -220,7 +220,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     var languageWrapper = document.createElement('div');
                     languageWrapper.className = 'ts-language-wrapper';
                     languageWrapper.style.height = '36px';
-                    languageWrapper.style.fontFamily = "Open Sans"
+                    languageWrapper.style.fontFamily = 'Open Sans';
 
                     languageWrapper.onmouseover = function () {
                         languageWrapper.style.backgroundColor = '#e8eaef';
@@ -257,7 +257,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     titleElement.style.fontSize = '14px';
                     titleElement.style.textAlign = 'left';
                     titleElement.style.color = '#0a2540';
-                    titleElement.style.fontFamily = "Open Sans"
+                    titleElement.style.fontFamily = 'Open Sans';
 
                     titleElement.style.userSelect = 'none';
 
@@ -273,7 +273,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     arrowElement.style.top = '7px';
                     arrowElement.style.border = '6px solid transparent';
                     arrowElement.style.borderColor = 'transparent transparent #ccc transparent';
-                    arrowElement.style.fontFamily = "Open Sans"
+                    arrowElement.style.fontFamily = 'Open Sans';
 
                     if (
                         customizer.customDivDirection === 'UP' &&
@@ -343,14 +343,14 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
                 if (customizer && customizer.appearance === 'WITH_BRANDING') {
                     var branding = document.createElement('div');
-                    branding.style.fontFamily = "Open Sans"
+                    branding.style.fontFamily = 'Open Sans';
 
                     branding.className = 'select-header';
                     branding.innerHTML = '⚡ by translatestack';
                     branding.style.backgroundColor = 'white';
                     branding.style.setProperty('font-size', '10px');
                     branding.style.setProperty('font-family', 'Open Sans');
-                    
+
                     branding.style.setProperty('line-height', '36px');
                     branding.style.setProperty('text-align', 'center');
                     branding.style.setProperty('user-select', 'none');
@@ -444,12 +444,12 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     }
 
     window.initTsStackTranslator = init();
-    
+
     function addStyle(styleString) {
         const style = document.createElement('style');
         style.textContent = styleString;
         document.head.append(style);
-      }
+    }
 
     function walk(element, onlyExtract = true, from, to, globalIndex, shouldReturnBack = false) {
         if (element && element.childNodes) {
