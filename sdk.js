@@ -457,6 +457,11 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             for (let node of element.childNodes) {
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
+                        var obj = node.attributes;
+                        var array = obj ? Array.prototype.slice.call(obj) : [];
+                        console.log('ARRAY', array);
+                        
+                        
                         if (onlyExtract) {
                             walk(node, true, from, to, globalIndex, shouldReturnBack);
                         } else {
@@ -474,10 +479,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         ) {
                             // console.log("ATTRIBUTE", );
 
-                            var obj = node.attributes;
-                            var array = obj ? Array.prototype.slice.call(obj) : [];
-                            console.log('ARRAY', array);
-                            
+                         
                             var trimmedString = node.textContent ? node.textContent.trim() : '';
                             if (trimmedString.length > 0) {
                                 if (onlyExtract) {
