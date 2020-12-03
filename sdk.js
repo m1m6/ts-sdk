@@ -460,11 +460,55 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         var obj = node.attributes;
                         var array = obj ? Array.prototype.slice.call(obj) : [];
                         console.log('ARRAY', array);
-                        
-                        
+
                         if (onlyExtract) {
+                            for (var i = 0; i < array.length; i++) {
+                                var nodeAttr = array[i];
+
+                                if (nodeAttr && nodeAttr.nodeName.includes('data-')) {
+                                    window.siteStrings.push(nodeAttr.nodeValue.trim());
+                                } else if (nodeAttr && nodeAttr.nodeName.includes('placeholder')) {
+                                    window.siteStrings.push(nodeAttr.nodeValue.trim());
+                                }
+                            }
+
                             walk(node, true, from, to, globalIndex, shouldReturnBack);
                         } else {
+                            for (var i = 0; i < array.length; i++) {
+                                var nodeAttr = array[i];
+
+                                if (
+                                    nodeAttr &&
+                                    (nodeAttr.nodeName.includes('data-') ||
+                                        nodeAttr.nodeName.includes('placeholder'))
+                                ) {
+                                    if (nodeAttr.textContent.trim() === from.trim()) {
+                                        if (
+                                            globalIndex >= 0 &&
+                                            window.translatedStringsMap[globalIndex] &&
+                                            !window.translatedStringsMap[globalIndex].isReplaced
+                                        ) {
+                                            node.textContent = node.textContent.replace(from, to);
+                                        }
+
+                                        if (shouldReturnBack) {
+                                            node.textContent = node.textContent.replace(from, to);
+                                        }
+
+                                        if (
+                                            globalIndex >= 0 &&
+                                            window.translatedStringsMap[globalIndex]
+                                        ) {
+                                            window.translatedStringsMap[
+                                                globalIndex
+                                            ].isReplaced = true;
+                                        }
+
+                                        return;
+                                    }
+                                }
+                            }
+
                             walk(node, false, from, to, globalIndex, shouldReturnBack);
                         }
                         break;
@@ -479,7 +523,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         ) {
                             // console.log("ATTRIBUTE", );
 
-                         
                             var trimmedString = node.textContent ? node.textContent.trim() : '';
                             if (trimmedString.length > 0) {
                                 if (onlyExtract) {
