@@ -536,8 +536,8 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         break;
                     case Node.TEXT_NODE:
                         if (node.name)
-                        console.log("node.name", node.content);
-                        
+                        console.log("node.name1", node.content);
+
                         var parentNodeName = node.parentNode.nodeName.toUpperCase();
                         if (
                             parentNodeName !== 'SCRIPT' &&
@@ -549,7 +549,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         ) {
                             // console.log("ATTRIBUTE", );
                             if (node.name)
-                            console.log("node.name", node.content);
+                            console.log("node.name2", node.content);
                             // console.log("node.nodeType", node.nodeType);
                             // console.log("node.localName", node.localName);
 
