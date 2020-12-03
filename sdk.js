@@ -12,7 +12,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
     function init() {
         var head = document.getElementsByTagName('head')[0];
-    
+
         var link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap';
@@ -505,6 +505,11 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                             }
                         }
                         break;
+
+                    case Node.ATTRIBUTE_NODE:
+                        console.log(' node.textContent', node.textContent);
+                        console.log(' node.textContent', node);
+
                     case Node.DOCUMENT_NODE:
                         if (onlyExtract) {
                             walk(node, true, from, to, globalIndex, shouldReturnBack);
