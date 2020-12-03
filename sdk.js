@@ -12,7 +12,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     addStyle(`
         @font-face {
             font-family: 'Open Sans';
-            src: local('AnoRegular'), url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap') format('truetype');
+            src: local('Open Sans'), url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
             font-style: normal;
         }
     `);
