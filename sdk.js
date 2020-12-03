@@ -2,6 +2,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
 (function () {
     window.siteStrings = [];
+    window.pageTitle = '';
+    window.pageDescription = '';
+    window.isHeadContentReplaced = false;
 
     // var everythingLoaded = setTimeout(function () {
     //     if (/loaded|complete/.test(document.readyState)) {
@@ -18,6 +21,25 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
         link.href = 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap';
 
         head.appendChild(link);
+
+        // get header and description content
+        window.document.querySelectorAll('meta').forEach((element) => {
+            if (element.name === 'description') {
+                const trimmedText = element.content.trim();
+                if (trimmedText.length > 0) {
+                    window.siteStrings.push(trimmedText);
+                    pageTitle = trimmedText;
+                }
+            }
+        });
+
+        window.document.querySelectorAll('head').forEach((element) => {
+            const trimmedText = element.textContent.trim();
+            if (trimmedText.length > 0) {
+                window.siteStrings.push(trimmedText);
+                pageDescription = trimmedText;
+            }
+        });
 
         walk(document.body, true);
 
@@ -330,6 +352,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
                             applyTranslations(language.id);
                             buildSelect(language.id);
+                            // applyHeaderTranslations(langId);
                         }
                     };
 
@@ -401,8 +424,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                         '',
                         `${location.pathname}?${params}${location.hash}`
                     );
-
-                    // window.history.replaceState({}, '', `/?language=${languageObject[0].iso2}`);
                 } else {
                     localStorage.removeItem(TS_STACK_SELECTED_LANG);
                     window.history.replaceState({}, '', `${location.pathname}?${location.hash}`);
@@ -413,6 +434,7 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 for (var i = 0; i < window.translatedStringsMap.length; i++) {
                     var value = window.translatedStringsMap[i];
                     walk(document.body, false, value.to, value.original, i, true);
+                    walk(document.head, false, value.to, value.original, i, true);
                 }
 
                 window.translatedStringsMap = [];
@@ -436,6 +458,9 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                     translation.translatedString,
                                     itemIndex - 1
                                 );
+
+                                walk(document.head, false, value.to, value.original, i, true);
+
                             }
                         });
                     }
@@ -446,12 +471,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
     window.initTsStackTranslator = init();
 
-    function addStyle(styleString) {
-        const style = document.createElement('style');
-        style.textContent = styleString;
-        document.head.append(style);
-    }
-
     function walk(element, onlyExtract = true, from, to, globalIndex, shouldReturnBack = false) {
         if (element && element.childNodes) {
             for (let node of element.childNodes) {
@@ -459,15 +478,12 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                     case Node.ELEMENT_NODE:
                         var obj = node.attributes;
                         var array = obj ? Array.prototype.slice.call(obj) : [];
-                        console.log('ARRAY', array);
 
                         if (onlyExtract) {
                             for (var i = 0; i < array.length; i++) {
                                 var nodeAttr = array[i];
 
-                                if (nodeAttr && nodeAttr.nodeName.includes('data-')) {
-                                    window.siteStrings.push(nodeAttr.nodeValue.trim());
-                                } else if (nodeAttr && nodeAttr.nodeName.includes('placeholder')) {
+                                if (nodeAttr && nodeAttr.nodeName.includes('placeholder')) {
                                     window.siteStrings.push(nodeAttr.nodeValue.trim());
                                 }
                             }
@@ -477,22 +493,24 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                             for (var i = 0; i < array.length; i++) {
                                 var nodeAttr = array[i];
 
-                                if (
-                                    nodeAttr &&
-                                    (nodeAttr.nodeName.includes('data-') ||
-                                        nodeAttr.nodeName.includes('placeholder'))
-                                ) {
+                                if (nodeAttr.nodeName.includes('placeholder')) {
                                     if (nodeAttr.textContent.trim() === from.trim()) {
                                         if (
                                             globalIndex >= 0 &&
                                             window.translatedStringsMap[globalIndex] &&
                                             !window.translatedStringsMap[globalIndex].isReplaced
                                         ) {
-                                            nodeAttr.textContent = nodeAttr.textContent.replace(from, to);
+                                            nodeAttr.textContent = nodeAttr.textContent.replace(
+                                                from,
+                                                to
+                                            );
                                         }
 
                                         if (shouldReturnBack) {
-                                            nodeAttr.textContent = nodeAttr.textContent.replace(from, to);
+                                            nodeAttr.textContent = nodeAttr.textContent.replace(
+                                                from,
+                                                to
+                                            );
                                         }
 
                                         if (
@@ -503,7 +521,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                                                 globalIndex
                                             ].isReplaced = true;
                                         }
-
                                         return;
                                     }
                                 }
@@ -603,4 +620,30 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
         return null;
     };
+
+    // function applyHeaderTranslations(langId) {
+        
+
+    //     pageStrings.forEach((translatedString, index) => {
+    //         if (translatedString.translations && translatedString.translations.length) {
+    //             translatedString.translations.forEach((translation) => {
+    //                 if (translation.languageId === parseInt(languageId)) {
+    //                     var itemIndex = window.translatedStringsMap.push({
+    //                         original: translatedString.original,
+    //                         to: translation.translatedString,
+    //                     });
+
+    //                     walk(
+    //                         document.body,
+    //                         false,
+    //                         translatedString.original,
+    //                         translation.translatedString,
+    //                         itemIndex - 1
+    //                     );
+    //                 }
+    //             });
+    //         }
+    //     });
+
+    // }
 })();
