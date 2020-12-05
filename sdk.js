@@ -23,10 +23,15 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             try {
                 response = JSON.parse(responseString);
                 window.__tsStack = response;
-            } catch (e) {}
+                init()
+            } catch (e) {
+                console.log("error", e);
+            }
         }
     };
-    xhrGet.onerror = function (err) {};
+    xhrGet.onerror = function (err) {
+        console.log("err", err);
+    };
 
     xhrGet.open(
         'GET',
