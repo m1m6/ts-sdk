@@ -2,124 +2,76 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
 (function () {
     window.siteStrings = [];
-    window.pageTitle = '';
-    window.pageDescription = '';
-    window.isHeadContentReplaced = false;
+    var head = document.getElementsByTagName('head')[0];
 
-    // var everythingLoaded = setTimeout(function () {
-    //     if (/loaded|complete/.test(document.readyState)) {
-    //         clearInterval(everythingLoaded);
-    //         init();
-    //     }
-    // }, 1000);
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap';
+
+    head.appendChild(link);
+
+    // get strings
+    var tssScript = document.getElementById('tss-script');
+    var tssScriptSrc = tssScript.getAttribute('src');
+    var apiKey = tssScriptSrc.substring(tssScriptSrc.indexOf('=') + 1);
+
+    var xhrGet = new XMLHttpRequest();
+    xhrGet.onreadystatechange = function () {
+        if (xhrGet.readyState == XMLHttpRequest.DONE) {
+            var responseString = xhrGet.responseText;
+            var response;
+            try {
+                response = JSON.parse(responseString);
+                window.__tsStack = response;
+            } catch (e) {}
+        }
+    };
+    xhrGet.onerror = function (err) {};
+
+    xhrGet.open(
+        'GET',
+        `https://app.translatestack.com/graphqlget-strings?apiKey=${apiKey}&href=${window.location.href}`,
+        true
+    );
+    xhrGet.setRequestHeader('Content-Type', 'application/json');
+    xhrGet.send();
 
     function init() {
-        var head = document.getElementsByTagName('head')[0];
 
-        var link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap';
+        if (
+            window.__tsStack &&
+            window.__tsStack.pageStrings &&
+            window.__tsStack.pageStrings.length
+        ) {
+            var prevLang = localStorage.getItem(TS_STACK_SELECTED_LANG);
+            var langId = null;
 
-        head.appendChild(link);
-
-        // get header and description content
-        window.document.querySelectorAll('meta').forEach((element) => {
-            if (element.name === 'description') {
-                const trimmedText = element.content.trim();
-                if (trimmedText.length > 0) {
-                    window.siteStrings.push(trimmedText);
-                    pageTitle = trimmedText;
+            if (prevLang /*&& window.location.search.includes('?language')*/) {
+                var parsedLangObject = JSON.parse(prevLang);
+                if (parsedLangObject) {
+                    langId = parsedLangObject.id;
                 }
-            }
-        });
+            } else {
+                var browserLanguage = getFirstBrowserLanguage();
+                if (browserLanguage && browserLanguage.length >= 2) {
+                    var languageIso2 = browserLanguage.split('-')[0];
 
-        window.document.querySelectorAll('head').forEach((element) => {
-            const trimmedText = element.textContent.trim();
-            if (trimmedText.length > 0) {
-                window.siteStrings.push(trimmedText);
-                pageDescription = trimmedText;
-            }
-        });
-
-        walk(document.body, true);
-
-        var tssScript = document.getElementById('tss-script');
-        var tssScriptSrc = tssScript.getAttribute('src');
-        var apiKey = tssScriptSrc.substring(tssScriptSrc.indexOf('=') + 1);
-
-        var data = {
-            apiKey: apiKey,
-            pageText: window.siteStrings,
-            pathname: window.location.pathname,
-            origin: window.location.origin,
-            href: window.location.href,
-        };
-
-        var xhrGet = new XMLHttpRequest();
-        xhrGet.onreadystatechange = function () {
-            if (xhrGet.readyState == XMLHttpRequest.DONE) {
-                var responseString = xhrGet.responseText;
-                var response;
-                try {
-                    response = JSON.parse(responseString);
-                    window.__tsStack = response;
-                } catch (e) {}
-
-                if (response && response.pageStrings && response.pageStrings.length) {
-                    var prevLang = localStorage.getItem(TS_STACK_SELECTED_LANG);
-                    var langId = null;
-
-                    if (prevLang /*&& window.location.search.includes('?language')*/) {
-                        var parsedLangObject = JSON.parse(prevLang);
-                        if (parsedLangObject) {
-                            langId = parsedLangObject.id;
-                        }
-                    } else {
-                        var browserLanguage = getFirstBrowserLanguage();
-                        if (browserLanguage && browserLanguage.length >= 2) {
-                            var languageIso2 = browserLanguage.split('-')[0];
-
-                            if (languageIso2.length === 2) {
-                                window.__tsStack.populatedLanguages.forEach((l) => {
-                                    if (l.iso2 === languageIso2) {
-                                        langId = l.id;
-                                    }
-                                });
+                    if (languageIso2.length === 2) {
+                        window.__tsStack.populatedLanguages.forEach((l) => {
+                            if (l.iso2 === languageIso2) {
+                                langId = l.id;
                             }
-                        }
+                        });
                     }
-
-                    buildSelect(langId);
-
-                    if (langId) {
-                        applyTranslations(langId);
-                    }
-                } else {
-                    setTimeout(() => {
-                        var xhr = new XMLHttpRequest();
-                        xhr.onload = function () {}; // success case
-                        xhr.onerror = function () {}; // failure case
-
-                        xhr.open(
-                            'POST',
-                            'https://app.translatestack.com/graphqlsave-strings',
-                            true
-                        );
-                        xhr.setRequestHeader('Content-Type', 'application/json');
-                        xhr.send(JSON.stringify(data));
-                    }, 5000);
                 }
             }
-        };
-        xhrGet.onerror = function (err) {};
 
-        xhrGet.open(
-            'GET',
-            `https://app.translatestack.com/graphqlget-strings?apiKey=${apiKey}&href=${window.location.href}`,
-            true
-        );
-        xhrGet.setRequestHeader('Content-Type', 'application/json');
-        xhrGet.send();
+            buildSelect(langId);
+
+            if (langId) {
+                applyTranslations(langId);
+            }
+        }
 
         function buildSelect(langId) {
             if (window.__tsStack) {
@@ -645,29 +597,4 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
         return null;
     };
-
-    // function applyHeaderTranslations(langId) {
-
-    //     pageStrings.forEach((translatedString, index) => {
-    //         if (translatedString.translations && translatedString.translations.length) {
-    //             translatedString.translations.forEach((translation) => {
-    //                 if (translation.languageId === parseInt(languageId)) {
-    //                     var itemIndex = window.translatedStringsMap.push({
-    //                         original: translatedString.original,
-    //                         to: translation.translatedString,
-    //                     });
-
-    //                     walk(
-    //                         document.body,
-    //                         false,
-    //                         translatedString.original,
-    //                         translation.translatedString,
-    //                         itemIndex - 1
-    //                     );
-    //                 }
-    //             });
-    //         }
-    //     });
-
-    // }
 })();
