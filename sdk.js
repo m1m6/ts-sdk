@@ -2,6 +2,8 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
 
 (function () {
     window.siteStrings = [];
+    window.translatedStringsMap = [];
+
     var head = document.getElementsByTagName('head')[0];
 
     var link = document.createElement('link');
@@ -359,8 +361,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
                 }
             }
         }
-
-        window.translatedStringsMap = [];
 
         function applyTranslations(languageId) {
             var languageObject = window.__tsStack.populatedLanguages.filter((lang) => {
