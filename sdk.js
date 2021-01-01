@@ -25,14 +25,14 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             try {
                 response = JSON.parse(responseString);
                 window.__tsStack = response;
-                init()
+                init();
             } catch (e) {
-                console.log("error", e);
+                console.log('error', e);
             }
         }
     };
     xhrGet.onerror = function (err) {
-        console.log("err", err);
+        console.log('err', err);
     };
 
     xhrGet.open(
@@ -44,7 +44,6 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
     xhrGet.send();
 
     function init() {
-
         if (
             window.__tsStack &&
             window.__tsStack.pageStrings &&
@@ -56,7 +55,26 @@ const TS_STACK_SELECTED_LANG = 'ts-stack-sl';
             if (prevLang /*&& window.location.search.includes('?language')*/) {
                 var parsedLangObject = JSON.parse(prevLang);
                 if (parsedLangObject) {
-                    langId = parsedLangObject.id;
+                    //check if the langId is within the source/target languages
+
+                    let isExist = false;
+
+                    window.__tsStack.populatedLanguages.forEach((l) => {
+                        if (l.id === parsedLangObject.id) {
+                            isExist = true;
+                        }
+                    });
+
+                    if (
+                        window.__tsStack.sourceLanguage &&
+                        window.__tsStack.sourceLanguage.id === parsedLangObject.id
+                    ) {
+                        isExist = true;
+                    }
+
+                    if (isExist) {
+                        langId = parsedLangObject.id;
+                    }
                 }
             } else {
                 var browserLanguage = getFirstBrowserLanguage();
